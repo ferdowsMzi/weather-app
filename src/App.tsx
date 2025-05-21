@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div
-      className={` ${skyGradient} w-full h-100vh items-start justify-start py-3rem max-w-425px px-3rem`}
+      className={` ${skyGradient} w-full h-100vh items-start justify-start py-3rem max-w-430px mx-auto px-3rem rounded-lg`}
     >
       <Dashboard setSkyGradient={setSkyGradient} />
     </div>

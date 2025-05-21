@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fetchWeather } from '../services/weatherService';
 import WeatherDetails from './weatherDetails';
-// import { iconMap } from '../assets/IconsMap';
+import { iconMap } from '../assets/IconsMap';
+import { WiDaySunny } from 'react-icons/wi';
 
 type Props = {
   setSkyGradient: (bg: string) => void;
@@ -13,6 +14,7 @@ export default function Dashboard({ setSkyGradient }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [weather, setWeather] = useState<any>(null);
   const [time, setTime] = useState<string>('');
+  const [icon, setIcon] = useState<any>(<WiDaySunny size={48} />);
 
   const getLocalTime = (dt: number, timezone: number): string => {
     const temp = new Date((dt + timezone) * 1000);
@@ -43,6 +45,9 @@ export default function Dashboard({ setSkyGradient }: Props) {
     if (weather) {
       const gradient = getSkyGradient(time);
       setSkyGradient(gradient);
+      const main = weather.weather[0]?.main;
+      const icon = iconMap[main];
+      setIcon(icon);
     }
   }, [weather]);
 
@@ -52,7 +57,6 @@ export default function Dashboard({ setSkyGradient }: Props) {
       try {
         const data = await fetchWeather(city);
         setWeather(data);
-        console.log('first', data);
         const localTime = getLocalTime(data.dt, data.timezone);
         setTime(localTime);
       } catch (err) {
@@ -66,21 +70,20 @@ export default function Dashboard({ setSkyGradient }: Props) {
 
   return (
     <div className='w-full h-full flex flex-col items-center gap-0'>
-      {/* <h1 className='text-8vh font-bold text-gray-700'>Weather App</h1> */}
       <div className='w-full flex flex-row items-center justify-center gap-8'>
         {weather && (
           <h2 className='text-bold text-2rem text-white'>{weather.name}</h2>
         )}
 
-        <div className='w-5/10 max-w-20rem h-3rem rounded-md px-1rem flex flex-row gap-0 items-center justify-end border-1px border-dark-800 bg-white'>
+        <div className='w-5/10 max-w-20rem h-3rem rounded-md px-1rem flex flex-row gap-0 items-center justify-end border-1px border-white bg-gray-100 shadow-sm'>
           <input
             type='text'
             placeholder='Tehran'
-            className='w-full h-full text-lg border-none'
+            className='w-full h-full text-lg outline-none bg-transparent'
             onChange={(e) => setInputValue(e.target.value)}
           />
           <button onClick={() => setCity(inputValue)} className='w-30px h-full'>
-            <img src='/search.png' alt='search' className='w-30px h-30px' />
+            <img src='/search.png' alt='search' className='translate scale-1' />
           </button>
         </div>
       </div>
@@ -89,10 +92,12 @@ export default function Dashboard({ setSkyGradient }: Props) {
           <div
             className={`w-full max-w-25rem flex flex-row items-center justify-start`}
           >
-            <img
+            {/* <img
               src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
               alt={weather.weather[0].description}
-            />
+            /> */}
+            <div className='text-white'>{icon}</div>
+
             <p className='text-2rem font-light text-white'>
               {weather.weather[0].description}
             </p>
